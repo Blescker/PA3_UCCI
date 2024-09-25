@@ -1,7 +1,10 @@
 package com.example.pa3.API
 
 import retrofit2.Call
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 
     interface ConsumirAPI {
@@ -9,11 +12,7 @@ import retrofit2.http.Path
         @GET("estudiantes/")
         fun getEstudiantes(): Call<List<Estudiante>>
 
-        // Obtener todas las rutas
-        @GET("rutas/")
-        fun getRutas(): Call<List<Ruta>>
+        @POST("rutas/")
+        fun guardarRuta(@Body ruta: Ruta): Call<Ruta>
 
-        // Obtener una ruta específica por su ID
-        @GET("rutas/{id}/")
-        fun getRutaById(@Path("id") id: Int): Call<Ruta>
     }

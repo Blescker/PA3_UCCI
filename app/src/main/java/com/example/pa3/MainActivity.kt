@@ -1,6 +1,7 @@
 package com.example.pa3
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.Button
@@ -18,15 +19,23 @@ import com.mapbox.maps.plugin.LocationPuck2D
 import com.mapbox.maps.plugin.locationcomponent.LocationComponentPlugin
 import com.mapbox.maps.plugin.locationcomponent.location
 import com.mapbox.geojson.Point
+import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager
+import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.Calendar
+import com.mapbox.maps.plugin.annotation.annotations
+import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var mapView: MapView
     private var currentLocation: Point? = null  // Guardar la ubicación actual
+    private lateinit var pointAnnotationManager: PointAnnotationManager  // Para manejar los markers
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +43,11 @@ class MainActivity : AppCompatActivity() {
 
         // Inicializar Mapbox
         mapView = findViewById(R.id.mapView)
+        mapView.getMapboxMap().loadStyleUri(Style.MAPBOX_STREETS) {
+            enableLocationComponent()
+        }
+
+        pointAnnotationManager = mapView.annotations.createPointAnnotationManager(mapView)
 
         // Acceder a mapboxMap usando la propiedad directamente
         val mapboxMap = mapView.getMapboxMap()
@@ -41,6 +55,22 @@ class MainActivity : AppCompatActivity() {
         // Usar el método loadStyle con las constantes de estilo de Mapbox
         mapboxMap.loadStyleUri(getMapStyle()) {
             requestLocationPermission()  // Solicitar permisos de ubicación
+        }
+        val btnIrSeguimiento = findViewById<Button>(R.id.btnIrSeguimiento)
+
+        // Al hacer clic, se lanza la Activity Seguimiento
+        btnIrSeguimiento.setOnClickListener {
+            // Verificar si la ubicación actual está disponible
+            if (currentLocation != null) {
+                // Crear un Intent para cambiar a SeguimientoActivity
+                val intent = Intent(this, activity_seguimiento::class.java)
+                intent.putExtra("latitud", currentLocation!!.latitude())  // Guardar latitud
+                intent.putExtra("longitud", currentLocation!!.longitude())  // Guardar longitud
+                startActivity(intent)
+            } else {
+                // Manejar el caso en el que la ubicación aún no esté disponible
+                println("Ubicación no disponible")
+            }
         }
 
         // Mostrar los datos del estudiante
@@ -52,18 +82,24 @@ class MainActivity : AppCompatActivity() {
         btnUbicarme.setOnClickListener {
             // Verificar si currentLocation tiene valor antes de mover la cámara
             if (currentLocation != null) {
-                // Mover la cámara a la ubicación actual
+                // Mover la cámara a la ubicación actual con flyTo
                 mapboxMap.setCamera(
                     CameraOptions.Builder()
-                        .center(currentLocation)
-                        .zoom(14.0)  // Ajusta el nivel de zoom
+                        .center(currentLocation)  // Centrar la cámara en la ubicación actual
+                        .zoom(15.0)  // Ajusta el nivel de zoom para acercar la vista
                         .build()
                 )
+                // Colocar un marker en la ubicación actual
+                addMarkerAtLocation(currentLocation!!)
+                val intent = Intent(this, activity_seguimiento::class.java)
+                intent.putExtra("latitud", currentLocation!!.latitude())
+                intent.putExtra("longitud", currentLocation!!.longitude())
+                startActivity(intent)
+
                 Toast.makeText(this, "Centrando en tu ubicación actual", Toast.LENGTH_SHORT).show()
             } else {
                 // Mostrar un mensaje si la ubicación no está disponible
                 Toast.makeText(this, "Ubicación no disponible", Toast.LENGTH_SHORT).show()
-                println("currentLocation es null")  // Log para verificar
             }
         }
     }
@@ -121,6 +157,19 @@ class MainActivity : AppCompatActivity() {
             currentLocation = point
             println("Ubicación actual: ${point.latitude()}, ${point.longitude()}")  // Verificar que se obtienen las coordenadas
         }
+    }
+    // Agregar un marker en la ubicación actual
+    private fun addMarkerAtLocation(location: Point) {
+        // Crear el marker en la ubicación dada
+        val originalBitmap = BitmapFactory.decodeResource(resources, R.drawable.red_marker)  // Asegúrate de tener un ícono llamado marker_icon
+        val scaledBitmap = Bitmap.createScaledBitmap(originalBitmap, 64, 64, false)  // Cambia los valores 64x64 según el tamaño que desees
+
+        val pointAnnotationOptions = PointAnnotationOptions()
+            .withPoint(location)  // Establece la ubicación del marker
+            .withIconImage(scaledBitmap)  // Puedes personalizar el icono si lo deseas
+
+        // Añadir el marker
+        pointAnnotationManager.create(pointAnnotationOptions)
     }
 
     // Cargar los datos del estudiante desde la API

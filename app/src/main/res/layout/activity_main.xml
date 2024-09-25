@@ -29,6 +29,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <Button
+        android:id="@+id/btnIrSeguimiento"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ir a\n Seguimiento"
+        app:layout_constraintStart_toEndOf="@id/btnUbicarme"
+        app:layout_constraintTop_toBottomOf="@+id/studentDataTextView"
+        android:layout_marginStart="5dp"
+        >
+
+    </Button>
+
     <!-- MapView para Mapbox -->
     <com.mapbox.maps.MapView
         android:id="@+id/mapView"
