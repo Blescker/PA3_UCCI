@@ -15,4 +15,7 @@ import retrofit2.http.Path
         @POST("rutas/")
         fun guardarRuta(@Body ruta: Ruta): Call<Ruta>
 
+        @GET("rutas/")
+        fun getRutas(): Call<RutasResponse>
+
     }

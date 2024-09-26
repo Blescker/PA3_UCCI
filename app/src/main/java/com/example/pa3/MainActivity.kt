@@ -47,6 +47,7 @@ class MainActivity : AppCompatActivity() {
             enableLocationComponent()
         }
 
+
         pointAnnotationManager = mapView.annotations.createPointAnnotationManager(mapView)
 
         // Acceder a mapboxMap usando la propiedad directamente

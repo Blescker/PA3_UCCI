@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">PA3</string>
     <string name="mapbox_access_token">sk.eyJ1IjoiYmxlc3Nja2VyMjIiLCJhIjoiY20xZmZ6ZnRjMXg0cDJxcTZ4bmV3YXR2NCJ9.zVrgmdTmsJvvGfZMk4TJnA</string>
+    <string name="rutas">Mis rutas</string>
 </resources>

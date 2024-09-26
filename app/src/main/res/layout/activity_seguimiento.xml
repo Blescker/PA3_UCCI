@@ -44,6 +44,31 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnMisRutas"
+                android:layout_width="150dp"
+                android:layout_height="60dp"
+                android:text="Mis rutas"
+                android:layout_marginStart="110dp"
+                android:layout_marginTop="20dp">
+
+            </Button>
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/buscarruta">
+
+            </ImageView>
+
+        </LinearLayout>
+
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
